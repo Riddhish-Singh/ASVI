@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASVI - About Us</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #f05044;
+            --secondary-color: #52265b;
+            --accent-color: #8900d0;
+            --header-footer-bg: linear-gradient(to right, #ff938a, #9b8cb8);
+            --text-color: #333;
+            --light-bg: #f5f5f5;
+            --white: #fff;
+            --gray: #7f8c8d;
+            --dark-gray: #2c3e50;
+            --contact-form-bg: #e6f7ff;
+            --contact-btn-bg: #0056D2;
+            --hr-services-color: #FF5F1F;
+            --glowing-shadow: 0 0 10px rgba(240, 80, 68, 0.2);
+            --text-glow-color: rgba(240, 80, 68, 0.6);
+        }
+
+        /* --- General Animations & Futuristic Design --- */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glowing Text Style */
+        .glowing-text {
+            text-shadow: 0 0 5px var(--text-glow-color), 0 0 10px var(--text-glow-color);
+            transition: text-shadow 0.3s ease-in-out;
+        }
+
+        .glowing-text:hover {
+            text-shadow: 0 0 8px var(--text-glow-color), 0 0 15px var(--text-glow-color), 0 0 20px var(--text-glow-color);
+        }
+
+        /* --- Chatbot Styles --- */
+        .chatbot-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        #chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #chatbot-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        #chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 450px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #chatbot-window.open {
+            display: flex;
+        }
+
+        .chatbot-header {
+            background: var(--secondary-color);
+            color: white;
+            padding: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .chatbot-body {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .user-message {
+            background-color: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background-color: #e5e5e5;
+            color: var(--text-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chatbot-footer {
+            display: flex;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        #chatbot-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        /* NEW: Chatbot Options Styles */
+        #chatbot-options {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .option-button {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 10px 15px;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.2s ease;
+        }
+
+        .option-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* --- Guided Tour Styles --- */
+        .tour-active .tour-highlight {
+            position: relative;
+            z-index: 1001;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+        }
+
+        .tour-box {
+            position: absolute;
+            background-color: var(--white);
+            color: var(--text-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            z-index: 1002;
+        }
+
+        .tour-box .tour-nav {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tour-box .tour-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .tour-box .next-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .tour-box .skip-btn {
+            background-color: #e5e5e5;
+            color: var(--text-color);
+        }
+
+        /* --- Existing Styles from previous work --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--white);
+            overflow-x: hidden;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-image: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+            color: var(--white);
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-image 0.3s ease;
+        }
+        .btn:hover {
+            background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .hero-banner {
+            background: linear-gradient(rgba(134, 111, 133, 0.7), rgba(134, 111, 133, 0.7)), url('https://www.shutterstock.com/image-photo/human-searchleader-ceo-hand-touch-260nw-2119571744.jpg') no-repeat center center/cover;
+            color: var(--white);
+            position: relative;
+            min-height: 100vh;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-banner-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .hero-banner-text h1 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 3.5rem;
+            color: var(--white);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero-banner-text p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 30px;
+            color: var(--white);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .sticky-header {
+            background: var(--header-footer-bg);
+            color: var(--white);
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: var(--glowing-shadow);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .sticky-header.visible {
+            transform: translateY(0);
+        }
+        .sticky-header .logo img {
+            height: 80px;
+        }
+        .sticky-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+        nav a:hover::after {
+            width: 100%;
+            left: 0;
+            background: var(--secondary-color);
+        }
+        .section {
+            padding: 80px 0;
+            text-align: center;
+        }
+        .section.light-bg {
+            background-color: var(--light-bg);
+        }
+        .section h2 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 2.8rem;
+            margin-bottom: 50px;
+            color: var(--primary-color);
+            position: relative;
+        }
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        .section-intro {
+            max-width: 800px;
+            margin: 0 auto 50px;
+            font-size: 1.1rem;
+            color: var(--gray);
+        }
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            text-align: left;
+        }
+        .about-content img {
+            width: 400px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .about-text h3 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .grid-3-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .card {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        .card .icon {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        .card h3:contains("HR Services") {
+          color: #FF5F1F;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--secondary-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        .card h3 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        .card h3.hr-services-title {
+            color: var(--hr-services-color);
+        }
+        .card p {
+            color: var(--gray);
+        }
+        .card.case-study img {
+            max-width: 100px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        #partners-section {
+            background-color: var(--white);
+        }
+
+        /* Marquee Styles */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 40px 0;
+        }
+
+        .marquee-content {
+            display: inline-flex;
+            animation: marquee 20s linear infinite;
+        }
+
+        .marquee-content:hover {
+            animation-play-state: paused;
+        }
+        /* New keyframes to create a seamless loop */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .partners img {
+            max-height: 50px;
+            max-width: 150px;
+            filter: grayscale(100%);
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-right: 150px; /* Large spacing between logos */
+        }
+
+        .partners img:hover {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+        .contact-content {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            text-align: left;
+            flex-wrap: wrap;
+        }
+        .contact-info, .contact-form {
+            flex-basis: 45%;
+            min-width: 300px;
+        }
+        .contact-info p, .contact-info a {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .contact-info i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+        .contact-form {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .contact-form h3 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        .submit-btn {
+            background-color: var(--contact-btn-bg);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+        .submit-btn:hover {
+            background-color: #003e9f;
+        }
+        footer {
+            background: var(--header-footer-bg);
+            color: var(--white);
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: var(--glowing-shadow);
+        }
+        footer .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        footer nav ul {
+            justify-content: center;
+        }
+        footer nav a {
+            font-weight: 400;
+            color: var(--white);
+        }
+        footer nav a:hover::after {
+            background: var(--white);
+        }
+        footer .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .about-content img {
+                width: 100%;
+                max-width: 500px;
+            }
+            .contact-content {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        @media (max-width: 768px) {
+            .hero-banner-text h1 {
+                font-size: 2.5rem;
+            }
+            .section h2 {
+                font-size: 2rem;
+            }
+            nav ul {
+                display: none;
+            }
+            .sticky-header .container {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="sticky-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="file:///C:/Users/Riddhish/Downloads/delete_asvi-removebg-preview.png" alt="ASVI Logo"></a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">About Us</a></li>
+                    <li><a href="offerings.html">Offerings</a></li>
+                    <li><a href="case-studies.html">Case Studies</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero-banner" id="hero-banner">
+        <div class="container">
+            <div class="hero-banner-text">
+                <h1><span class="glowing-text">Strategic Fractional</span> <br><span style="color:var(--primary-color)" class="glowing-text">HR Services</span> <br> to help you focus on <br><span class="glowing-text">your core business</span></h1>
+                <a href="contact.html" class="btn">Secure a free consultation</a>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <section class="section light-bg" id="about">
+            <div class="container">
+                <h2 class="glowing-text">Who We Are</h2>
+                <div class="about-content">
+                    <img src="https://www.flexjobs.com/blog/wp-content/uploads/2019/11/29144739/HR-career.png" alt="ASVI Founders">
+                    <div class="about-text">
+                        <p>ASVI Thoughtworks provides expert fractional <strong class="glowing-text">HR Services</strong> for startups and small-to-medium businesses. Founded by seasoned HR professionals, our mission is to deliver <strong class="glowing-text">strategic, integrated, and impactful human resources solutions</strong>. We act as an extension of your team, helping you build a strong organizational framework and talent strategy without the overhead of a full-time HR department. Our approach focuses on empowering your business to grow by handling the complexities of people management, from talent acquisition to performance management and organizational design.</p>
+                        <p>Our team brings <strong class="glowing-text">years of experience from diverse industries</strong>, ensuring we can provide tailored solutions that address your unique challenges. We are passionate about helping businesses create resilient, high-performing cultures that drive long-term success.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="partners-section">
+            <div class="container">
+                <h2 class="glowing-text">Our Valued Partners</h2>
+                <div class="marquee-container">
+                    <div class="marquee-content">
+                        <img src="https://www.asvithoughtworks.com/images/bytetra.svg" alt="Bytetra logo">
+                        <img src="https://www.asvithoughtworks.com/images/swati.svg" alt="Swati logo">
+                        <img src="https://www.asvithoughtworks.com/images/slate.svg" alt="Slate logo">
+                        <img src="https://media.licdn.com/dms/image/v2/D560BAQHTTtgmP3Qj3w/company-logo_200_200/company-logo_200_200/0/1686914488307/vtion_media_logo?e=2147483647&v=beta&t=QiRnzEZG8RvNswzKa0-hWC8vrlmnzZLen2GADPGiMGM" alt="Vtion logo">
+                        <img src="https://media.licdn.com/dms/image/v2/C560BAQHUHK4UcoLiRg/company-logo_200_200/company-logo_200_200/0/1630605562796/vigyanshaala_logo?e=2147483647&v=beta&t=coegB46v0n9ms10w3fpv3GgZ_HYh2nH6fE9dl18QVHw" alt="Vigyanshaala logo">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk0a5eqFtm_9SpKhttMHIdH4N0WFfpeAkR8A&s" alt="Hero logo">
+                        <img src="data:image/png;base64,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" alt="GROUNDUP logo">
+
+                        <img src="https://www.asvithoughtworks.com/images/bytetra.svg" alt="Bytetra logo">
+                        <img src="https://www.asvithoughtworks.com/images/swati.svg" alt="Swati logo">
+                        <img src="https://www.asvithoughtworks.com/images/slate.svg" alt="Slate logo">
+                        <img src="https://media.licdn.com/dms/image/v2/D560BAQHTTtgmP3Qj3w/company-logo_200_200/company-logo_200_200/0/1686914488307/vtion_media_logo?e=2147483647&v=beta&t=QiRnzEZG8RvNswzKa0-hWC8vrlmnzZLen2GADPGiMGM" alt="Vtion logo">
+                        <img src="https://vigyanshaala.com/wp-content/uploads/2021/06/cropped-VS-logo.png" alt="Vigyanshaala logo">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk0a5eqFtm_9SpKhttMHIdH4N0WFfpeAkR8A&s" alt="Hero logo">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWMAAACOCAMAAADTsZk7AAABUFBMVEX///+gSxcAUE6dRACbPgCZNwAAPTucQQAASUeeRgqydVoATEmaOgBVeXf59PLCk38AQ0Ddxbx9lZQASkwAqpkcp5WXMgC/zMtwjo3m1M1NdnStaUcAOjfZ4eHXu7HOq57t8fGXq6qMo6K3fWOqYTzHnIry6eXj6enL1dWeZkHq29WNPRC9inOcZD+2xMTr7+8AIh6DPRtwZEymWS/MppY7amh8ooJkhYQYWFYxYmGvbk6jUiSBNQ+FPRmpb0aRWDZfpYqOdlQ+qZOVkGuQmXWNf12Mk3BIWUyFn31cUT2ltrZfX0tqpIiHRyYALyx1OyOSIAB3NBeETTCSPglMQTUjQT5rRi1MUEE3QjuVelaVSRtySTGgjGQnUEqOVzePTioAQUg3VUxXFwuZcU1gKBhrJQ6nnXO1hFanhVtbQjCCWTx+aExvUzm1aTV6clZqOyUUvNDUAAAQA0lEQVR4nO2c+1fiSBbH8yCBSBqi4eEjKuADMURFRVGBgE9axR5henqcaZtxevbR6z/+/9+2HklIVVCgcXfPnlOfmTNKJVUxX25u3XurMhzHYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGg8FgMBgMBoPBYDAYDAaDwWAwGg/G/4t9ihAZHbfDRHAAAAABJRU5ErkJggg==" alt="GROUNDUP logo">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="index.html">About Us</a></li>
+                    <li><a href="offerings.html">Offerings</a></li>
+                    <li><a href="case-studies.html">Case Studies</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="copyright glowing-text">Copyright All Rights Reserved &copy; 2025</div>
+        </div>
+    </footer>
+
+    <div class="chatbot-container">
+        <div id="chatbot-toggle">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <div id="chatbot-window">
+            <div class="chatbot-header">ASVI Chatbot</div>
+            <div id="chatbot-body" class="chatbot-body">
+                <div class="chat-message bot-message">Hello! Ask me about ASVI's services, or for our contact information.</div>
+                <div id="chatbot-options">
+                    <button class="option-button" data-query="about">Tell me about ASVI Thoughtworks</button>
+                    <button class="option-button" data-query="services">What services do you offer?</button>
+                    <button class="option-button" data-query="contact">How can I contact you?</button>
+                </div>
+            </div>
+            <div class="chatbot-footer">
+                <input type="text" id="chatbot-input" placeholder="Type your question...">
+            </div>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Logic for the sticky header that appears on scroll ---
+    const header = document.querySelector('.sticky-header');
+    const heroSection = document.getElementById('hero-banner');
+
+    if (header && heroSection) {
+        const heroSectionHeight = heroSection.offsetHeight;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > heroSectionHeight - 100) {
+                header.classList.add('visible');
+            } else {
+                header.classList.remove('visible');
+            }
+        });
+    }
+
+    // --- Logic for the chatbot window and questions ---
+    const chatbotToggle = document.getElementById('chatbot-toggle');
+    const chatbotWindow = document.getElementById('chatbot-window');
+    const chatbotBody = document.getElementById('chatbot-body');
+    const chatbotOptions = document.getElementById('chatbot-options');
+    const chatbotInput = document.getElementById('chatbot-input');
+
+    // An object to store our questions and answers
+    const chatbotResponses = {
+        'about': "ASVI Thoughtworks provides expert fractional HR services for startups and small-to-medium businesses. We help you build a strong organizational framework and talent strategy.",
+        'services': "We offer a range of strategic HR services including talent acquisition, performance management, and organizational design.",
+        'contact': "You can contact us via email at info@asvithoughtworks.com, or by phone at +91-99999-99999."
+    };
+
+    if (chatbotToggle && chatbotWindow && chatbotBody && chatbotOptions && chatbotInput) {
+        // Function to display a message in the chat window
+        const addMessage = (text, sender) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', sender);
+            messageDiv.innerHTML = text;
+            chatbotBody.appendChild(messageDiv);
+            chatbotBody.scrollTop = chatbotBody.scrollHeight; // Auto-scroll to the bottom
+        };
+
+        // Toggle the chatbot window visibility
+        chatbotToggle.addEventListener('click', () => {
+            chatbotWindow.classList.toggle('open');
+            // Show options when the chat window opens
+            if (chatbotWindow.classList.contains('open')) {
+                chatbotOptions.style.display = 'flex';
+                // Show the initial welcome message if it's the first time opening
+                if (chatbotBody.children.length <= 1) {
+                     addMessage("Hello! Ask me about ASVI's services, or for our contact information.", 'bot-message');
+                }
+            }
+        });
+
+        // Handle clicks on the option buttons
+        chatbotOptions.addEventListener('click', (event) => {
+            if (event.target.classList.contains('option-button')) {
+                const query = event.target.dataset.query;
+                const questionText = event.target.innerText;
+                addMessage(questionText, 'user-message');
+                chatbotOptions.style.display = 'none';
+
+                const responseText = chatbotResponses[query] || "Sorry, I don't have an answer for that right now.";
+                setTimeout(() => {
+                    addMessage(responseText, 'bot-message');
+                    chatbotOptions.style.display = 'flex';
+                }, 500);
+            }
+        });
+
+        // --- NEW LOGIC: Handle typed questions ---
+        chatbotInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && chatbotInput.value.trim() !== '') {
+                const userQuery = chatbotInput.value.trim().toLowerCase();
+                addMessage(userQuery, 'user-message');
+                chatbotInput.value = ''; // Clear the input field
+
+                let botResponse = chatbotResponses[userQuery];
+
+                // If the user's query doesn't match a predefined response
+                if (!botResponse) {
+                    // Create the "Contact Us" button HTML
+                    const contactButtonHTML = `
+                        <div style="text-align:center; margin-top: 10px;">
+                            <p>For these types of questions, please contact us!</p>
+                            <a href="contact.html"
+                                target="_blank"
+                                style="
+                                    display: inline-block;
+                                    padding: 12px 24px;
+                                    background-color: #3e0b4a;
+                                    color: #ffffff;
+                                    font-size: 16px;
+                                    font-family: Arial, sans-serif;
+                                    font-weight: bold;
+                                    text-decoration: none;
+                                    border-radius: 8px;
+                                    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+                                    transition: all 0.3s ease;
+                                    cursor: pointer;
+                                "
+                                onmouseover="this.style.backgroundColor='#d15647'"
+                                onmouseout="this.style.backgroundColor='#3e0b4a'">
+                                Contact Us!
+                            </a>
+                        </div>
+                    `;
+                    // Set the bot response to the button HTML
+                    botResponse = contactButtonHTML;
+                }
+
+                // Add the bot's response to the chat window
+                setTimeout(() => {
+                    addMessage(botResponse, 'bot-message');
+                }, 500); // Small delay for a more natural feel
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>
